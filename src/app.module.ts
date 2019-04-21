@@ -3,10 +3,11 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SmartcarController } from './smartcar/smartcar.controller';
 import { ConfigModule } from './common/config/config.module';
+import { SmartcarService } from './smartcar/smartcar.service';
 
 @Module({
   imports: [ConfigModule],
   controllers: [AppController, SmartcarController],
-  providers: [AppService],
+  providers: [AppService, SmartcarService],
 })
 export class AppModule {}
