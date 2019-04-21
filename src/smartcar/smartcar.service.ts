@@ -30,7 +30,26 @@ export class SmartcarService {
     return link;
   }
 
-  setAccessToken(accessToken: string) {
+  async exchangeCode(code: string) {
+    const configObject = {
+      ...this.configObject,
+      scope: ['read_vehicle_info', 'read_odometer'],
+    };
+
+    const client = new smartcar.AuthClient(configObject);
+
+    const resp = await client.exchangeCode(code);
+
+    console.log('resp', resp);
+
+    const accessToken = resp.accessToken;
     this.accessToken = accessToken;
+  }
+
+  async link() {
+    console.log('at', this.accessToken);
+
+    const vehicleIds = await smartcar.getVehicleIds(this.accessToken);
+    console.log(vehicleIds);
   }
 }

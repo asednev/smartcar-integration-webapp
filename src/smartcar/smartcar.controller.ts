@@ -15,15 +15,22 @@ export class SmartcarController {
   }
 
   @Get('exchange')
-  getExchange(@Req() request: Request, @Query('code') code: string) {
+  async getExchange(@Req() request: Request, @Query('code') code: string) {
     // tslint:disable-next-line:no-console
-    console.debug(request.url);
+    console.debug(request.headers);
     // tslint:disable-next-line:no-console
     console.debug('code', code);
 
     if (code) {
       // update access token
-      this.service.setAccessToken(code);
+      // await this.service.setAccessToken(code);
+
+      await this.service.exchangeCode(code);
     }
+  }
+
+  @Get('link')
+  async getLink() {
+    await this.service.link();
   }
 }
