@@ -2,13 +2,18 @@ import { Injectable } from '@nestjs/common';
 import * as smartcar from 'smartcar';
 import { SmartCarConfigOptions } from './smartcar.config';
 import { ConfigService } from 'src/common/config/config.service';
+import { VehicleService } from 'src/common/database/vehicle/vehicle.service';
+import { Vehicle } from 'src/common/database/vehicle/vehicle.entity';
 
 @Injectable()
 export class SmartcarService {
   private readonly configObject: any;
-  private accessToken: string;
+  private previousResponse: any;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private vehicleService: VehicleService,
+  ) {
     this.configObject = {
       clientId: this.configService.get(SmartCarConfigOptions.ClientId),
       clientSecret: this.configService.get(SmartCarConfigOptions.ClientSecret),
@@ -38,18 +43,30 @@ export class SmartcarService {
 
     const client = new smartcar.AuthClient(configObject);
 
-    const resp = await client.exchangeCode(code);
+    const res = await client.exchangeCode(code);
 
-    console.log('resp', resp);
+    // tslint:disable-next-line:no-console
+    console.debug('response', res);
 
-    const accessToken = resp.accessToken;
-    this.accessToken = accessToken;
+    this.previousResponse = res;
   }
 
   async link() {
-    console.log('at', this.accessToken);
+    const accessToken = this.previousResponse.accessToken;
+    console.log('at', accessToken);
 
-    const vehicleIds = await smartcar.getVehicleIds(this.accessToken);
-    console.log(vehicleIds);
+    const res = await smartcar.getVehicleIds(accessToken);
+    console.log(res);
+
+    res.vehicles.map(async vehicleId => {
+      const v = new Vehicle();
+      v.vehicleId = vehicleId;
+      v.accessToken = this.previousResponse.accessToken;
+      v.refreshToken = this.previousResponse.refreshToken;
+      v.accessTokenExpriration = this.previousResponse.expiration;
+      v.refreshExpiration = this.previousResponse.refreshExpiration;
+
+      await this.vehicleService.save(v);
+    });
   }
 }
