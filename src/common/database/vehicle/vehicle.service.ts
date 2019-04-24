@@ -7,7 +7,7 @@ import { DataMapper } from '@aws/dynamodb-data-mapper';
 export class VehicleService {
   private mapper: DataMapper;
 
-  constructor(private mapperService: DataMapperService) {
+  constructor(mapperService: DataMapperService) {
     this.mapper = mapperService.mapper;
   }
 

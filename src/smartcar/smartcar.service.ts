@@ -4,6 +4,7 @@ import { SmartCarConfigOptions } from './smartcar.config';
 import { ConfigService } from 'src/common/config/config.service';
 import { VehicleService } from 'src/common/database/vehicle/vehicle.service';
 import { Vehicle } from 'src/common/database/vehicle/vehicle.entity';
+import { OdometerHistoryService } from 'src/common/database/odometer-history/odometer-history.service';
 
 @Injectable()
 export class SmartcarService {
@@ -13,6 +14,7 @@ export class SmartcarService {
     private logger: Logger,
     private configService: ConfigService,
     private vehicleService: VehicleService,
+    private odometerHistoryService: OdometerHistoryService
   ) {
     this.configObject = {
       clientId: this.configService.get(SmartCarConfigOptions.ClientId),
@@ -87,12 +89,15 @@ export class SmartcarService {
       // tslint:disable-next-line: no-console
       console.time(timeLabel);
 
+      // query odometer data from SmartCar
       const updatedV = await this.updateOdometer(v);
 
       if (updatedV !== v) {
-        this.vehicleService.save(updatedV);
+        // update vehicles table with latest odometer reading
+        await this.vehicleService.save(updatedV);
 
-        //TODO: save changes into event log
+        // add odometer value into the event log
+        await this.odometerHistoryService.put(updatedV.toHistoryEntry());
       }
 
       // tslint:disable-next-line: no-console

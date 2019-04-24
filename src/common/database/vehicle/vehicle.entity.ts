@@ -3,6 +3,7 @@ import {
   hashKey,
   table,
 } from '@aws/dynamodb-data-mapper-annotations';
+import { OdometerHistory } from '../odometer-history/odometer-history.entity';
 
 @table('odo-vehicle')
 export class Vehicle {
@@ -26,4 +27,14 @@ export class Vehicle {
 
   @attribute()
   odometerUpdated: Date;
+
+  toHistoryEntry(): OdometerHistory {
+    const entry = new OdometerHistory();
+
+    entry.vehicleId = this.vehicleId;
+    entry.date = this.odometerUpdated;
+    entry.odometer = this.odometer;
+
+    return entry;
+  }
 }
