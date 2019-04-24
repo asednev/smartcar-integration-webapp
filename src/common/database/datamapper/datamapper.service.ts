@@ -23,8 +23,29 @@ export class DataMapperService {
       AWS.config.credentials = credentials;
     }
 
+    // local dynamodb
+    /*
+var AWS= require('aws-sdk'),
+dyn= new AWS.DynamoDB({ endpoint: new AWS.Endpoint('http://localhost:8000') });
+
+dyn.listTables(function (err, data)
+{
+   console.log('listTables',err,data);
+});
+    */
+
+    const dynamodb = new DynamoDB({ region: config.get(AWSConfigOptions.Region) });
+
+    /*
+    dynamodb.listTables((err, data) => {
+      console.log('listTables', err, data);
+    });
+    console.log('dyn', dynamodb);
+    */
+
+    // { endpoint: new AWS.Endpoint('http://localhost:8000') }
     this._mapper = new DataMapper({
-      client: new DynamoDB({ region: config.get(AWSConfigOptions.Region) }), // the SDK client used to execute operations
+      client: dynamodb, // the SDK client used to execute operations
       tableNamePrefix: '', // optionally, you can provide a table prefix to keep your dev and prod tables separate
     });
   }

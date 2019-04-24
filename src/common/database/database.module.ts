@@ -6,6 +6,6 @@ import { DataMapperService } from './datamapper/datamapper.service';
 @Module({
   imports: [ConfigModule],
   providers: [VehicleService, DataMapperService],
-  exports: [VehicleService],
+  exports: [VehicleService, DataMapperService],
 })
 export class DatabaseModule {}

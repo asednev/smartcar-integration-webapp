@@ -8,7 +8,6 @@ import { Vehicle } from 'src/common/database/vehicle/vehicle.entity';
 @Injectable()
 export class SmartcarService {
   private readonly configObject: any;
-  private previousResponse: any;
 
   constructor(
     private configService: ConfigService,
@@ -35,7 +34,7 @@ export class SmartcarService {
     return link;
   }
 
-  async exchangeCode(code: string) {
+  async exchange(code: string) {
     const configObject = {
       ...this.configObject,
       scope: ['read_vehicle_info', 'read_odometer'],
@@ -43,28 +42,26 @@ export class SmartcarService {
 
     const client = new smartcar.AuthClient(configObject);
 
-    const res = await client.exchangeCode(code);
+    const accessObject: {
+      accessToken: string,
+      refreshToken: string,
+      expiration: Date,
+      refreshExpiration: Date,
+    } = await client.exchangeCode(code);
 
-    // tslint:disable-next-line:no-console
-    console.debug('response', res);
+    const accessToken = accessObject.accessToken;
 
-    this.previousResponse = res;
-  }
+    const vehiclesObject: {
+      vehicles: string[],
+    } = await smartcar.getVehicleIds(accessToken);
 
-  async link() {
-    const accessToken = this.previousResponse.accessToken;
-    console.log('at', accessToken);
-
-    const res = await smartcar.getVehicleIds(accessToken);
-    console.log(res);
-
-    res.vehicles.map(async vehicleId => {
+    vehiclesObject.vehicles.map(async vehicleId => {
       const v = new Vehicle();
       v.vehicleId = vehicleId;
-      v.accessToken = this.previousResponse.accessToken;
-      v.refreshToken = this.previousResponse.refreshToken;
-      v.accessTokenExpriration = this.previousResponse.expiration;
-      v.refreshExpiration = this.previousResponse.refreshExpiration;
+      v.accessToken = accessObject.accessToken;
+      v.refreshToken = accessObject.refreshToken;
+      v.accessTokenExpriration = accessObject.expiration;
+      v.refreshExpiration = accessObject.refreshExpiration;
 
       await this.vehicleService.save(v);
     });

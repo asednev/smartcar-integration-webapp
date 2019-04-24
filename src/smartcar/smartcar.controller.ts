@@ -1,7 +1,5 @@
 import { Controller, Get, Req, Query, Res } from '@nestjs/common';
-import { Request, Response } from 'express';
-import { ConfigService } from 'src/common/config/config.service';
-import { SmartCarConfigOptions } from './smartcar.config';
+import { Response } from 'express';
 import { SmartcarService } from './smartcar.service';
 
 @Controller('smartcar')
@@ -15,22 +13,10 @@ export class SmartcarController {
   }
 
   @Get('exchange')
-  async getExchange(@Req() request: Request, @Query('code') code: string) {
-    // tslint:disable-next-line:no-console
-    console.debug(request.headers);
-    // tslint:disable-next-line:no-console
-    console.debug('code', code);
+  async getExchange(@Query('code') code: string) {
 
     if (code) {
-      // update access token
-      // await this.service.setAccessToken(code);
-
-      await this.service.exchangeCode(code);
+      await this.service.exchange(code);
     }
-  }
-
-  @Get('link')
-  async getLink() {
-    await this.service.link();
   }
 }
