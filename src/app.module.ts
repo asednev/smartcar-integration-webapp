@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, Logger } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SmartcarController } from './smartcar/smartcar.controller';
@@ -10,6 +10,6 @@ import { DebugModule } from './debug/debug.module';
 @Module({
   imports: [ConfigModule, DatabaseModule, DebugModule],
   controllers: [AppController, SmartcarController],
-  providers: [AppService, SmartcarService],
+  providers: [AppService, SmartcarService, Logger],
 })
 export class AppModule {}

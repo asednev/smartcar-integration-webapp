@@ -20,4 +20,10 @@ export class Vehicle {
 
   @attribute()
   refreshExpiration: Date;
+
+  @attribute()
+  odometer: number;
+
+  @attribute()
+  odometerUpdated: Date;
 }

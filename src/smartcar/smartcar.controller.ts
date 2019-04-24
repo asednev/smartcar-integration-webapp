@@ -19,4 +19,9 @@ export class SmartcarController {
       await this.service.exchange(code);
     }
   }
+
+  @Get('updateBatch')
+  async updateBatch() {
+    await this.service.updateBatch();
+  }
 }

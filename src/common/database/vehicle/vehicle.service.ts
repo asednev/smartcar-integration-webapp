@@ -14,4 +14,14 @@ export class VehicleService {
   async save(vehicle: Vehicle) {
     await this.mapper.put(vehicle);
   }
+
+  async listVehicles() {
+    const vehicles: Vehicle[] = [];
+
+    for await (const vehicle of this.mapper.scan({valueConstructor: Vehicle})) {
+        vehicles.push(vehicle);
+    }
+
+    return vehicles;
+  }
 }
