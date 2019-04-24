@@ -5,9 +5,10 @@ import { SmartcarController } from './smartcar/smartcar.controller';
 import { ConfigModule } from './common/config/config.module';
 import { SmartcarService } from './smartcar/smartcar.service';
 import { DatabaseModule } from './common/database/database.module';
+import { DebugModule } from './debug/debug.module';
 
 @Module({
-  imports: [ConfigModule, DatabaseModule],
+  imports: [ConfigModule, DatabaseModule, DebugModule],
   controllers: [AppController, SmartcarController],
   providers: [AppService, SmartcarService],
 })
