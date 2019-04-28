@@ -20,7 +20,7 @@ export class SmartcarService {
       clientId: this.configService.get(SmartCarConfigOptions.ClientId),
       clientSecret: this.configService.get(SmartCarConfigOptions.ClientSecret),
       redirectUri: this.configService.get(SmartCarConfigOptions.RedirectUri),
-      testMode: this.configService.get(SmartCarConfigOptions.TestMode),
+      testMode: (this.configService.get(SmartCarConfigOptions.TestMode) === 'true'),
     };
   }
 
